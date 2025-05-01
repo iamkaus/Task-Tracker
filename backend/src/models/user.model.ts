@@ -1,4 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
+import bcrypt from "bcryptjs";
+import {JWT_SECRET} from "../config/env.config";
+import jwt from "jsonwebtoken";
 
 export interface IUser extends Document {
     name: string;
@@ -7,6 +10,8 @@ export interface IUser extends Document {
     country: string;
     createdAt: Date;
     updatedAt: Date;
+    matchPassword: (enteredPassword: string) => Promise<boolean>;
+    getSignedJwtToken: () => string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -30,8 +35,9 @@ const UserSchema = new Schema<IUser>(
 
         password: {
             type: String,
-            required: [true, 'Password is required'],
+            required: [true, 'Please add a password'],
             minlength: 6,
+            select: false,
         },
 
         country: {
@@ -44,4 +50,30 @@ const UserSchema = new Schema<IUser>(
     }
 )
 
-export const UserModel = mongoose.model<IUser>('userModel', UserSchema);
+UserSchema.pre<IUser>('save', async function (next): Promise<void> {
+    if (!this.isModified('password')) {
+        next();
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+})
+
+UserSchema.methods.matchPassword = async function (enteredPassword: string): Promise<boolean> {
+    return await bcrypt.compare(enteredPassword, this.password);
+}
+
+UserSchema.methods.getSignedJwtToken = function (): string {
+    return jwt.sign(
+        {
+            userId: this._id
+        },
+        JWT_SECRET as string,
+        {
+            expiresIn: '30d'
+        }
+    )
+}
+
+export default mongoose.model<IUser>('User', UserSchema);
