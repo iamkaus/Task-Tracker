@@ -7,4 +7,6 @@ export const {
     MONGO_DB_URL,
     MONGO_DB_USER,
     MONGO_DB_PASSWORD,
+    JWT_SECRET,
+    JWT_EXPIRES_IN,
 } = process.env
