@@ -9,6 +9,7 @@ import databaseConnection from "./config/database.config";
 (async (): Promise<void> => {
     try {
         await databaseConnection();
+        console.log("Database Connected");
     } catch ( error: any) {
         console.error( `Error connecting to database: ${error.message}` );
     }
