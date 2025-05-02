@@ -47,6 +47,68 @@ export const signUp = async (req: Request, res: Response, next: NextFunction): P
     }
 }
 
-export const logIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {}
+export const logIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { email, password } = req.body;
 
-export const logOut = async (req: Request, res: Response, next: NextFunction): Promise<void> => {}
+        if (!email || !password) {
+            res.status(400).json({
+                success: false,
+                error: 'Please enter a valid email address and password.'
+            })
+        }
+
+        const user = await User.findOne({email: email}).select('+password');
+        if ( !user ) {
+            res.status(401).json({
+                success: false,
+                error: 'User does not exist or invalid credentials.'
+            });
+            return;
+        }
+
+        const isMatch = await user.matchPassword(password);
+        if ( !isMatch ) {
+            res.status(401).json({
+                success: false,
+                error: 'Invalid credentials.'
+            });
+            return;
+        }
+
+        const token = user.getSignedJwtToken();
+
+        res.status(200).json({
+            success: true,
+            token,
+            data: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                country: user.country
+            },
+        });
+
+    } catch ( error: any ) {
+        next(error);
+    }
+}
+
+export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if ( !user ) {
+            res.status(401).json({
+                success: false,
+                error: `User with id: ${req.params.id} not found.`
+            })
+        }
+        res.status(200).json({
+            success: true,
+            data: user
+        })
+    } catch ( error: any ) {
+        next(error);
+    }
+}
