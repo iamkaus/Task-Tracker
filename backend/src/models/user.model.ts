@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
-import {JWT_SECRET} from "../config/env.config";
+import { JWT_SECRET } from "../config/env.config";
 import jwt from "jsonwebtoken";
 
 export interface IUser extends Document {
@@ -71,7 +71,7 @@ UserSchema.methods.getSignedJwtToken = function (): string {
         },
         JWT_SECRET as string,
         {
-            expiresIn: '30d'
+            expiresIn: '30d',
         }
     )
 }
