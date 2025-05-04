@@ -1,5 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import User from '../models/user.model'
+import {JWT_SECRET} from "../config/env.config";
+import jwt from "jsonwebtoken";
+
+interface MyJwtPayload extends jwt.JwtPayload {
+    userId: string;
+}
 
 export const signUp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -96,16 +102,29 @@ export const logIn = async (req: Request, res: Response, next: NextFunction): Pr
 
 export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const user = await User.findById(req.params.id);
+        let token: string;
+        let decodedToken;
+        if (req.headers.authorization?.startsWith('Bearer ')) {
 
+            token = req.headers.authorization.split(' ')[1];
+            decodedToken = jwt.verify(token, JWT_SECRET) as MyJwtPayload;
+        } else {
+            res.status(401).json({
+                success: false,
+                error: 'Unauthorized: No token provided'
+            });
+        }
+
+        const user = await User.findById(decodedToken?.userId);
         if ( !user ) {
             res.status(401).json({
                 success: false,
-                error: `User with id: ${req.params.id} not found.`
+                error: 'Unauthorized: No user found with that token.'
             })
         }
         res.status(200).json({
             success: true,
+            message: 'User found.',
             data: user
         })
     } catch ( error: any ) {

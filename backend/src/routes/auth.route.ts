@@ -7,6 +7,6 @@ authRoute.post('/sign-up', signUp);
 
 authRoute.post('/login', logIn);
 
-authRoute.get('/getMe/:id', getMe);
+authRoute.get('/getMe', getMe);
 
 export default authRoute;
