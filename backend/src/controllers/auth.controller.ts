@@ -123,6 +123,12 @@ export const logIn = async (req: Request, res: Response, next: NextFunction): Pr
     }
 }
 
+interface AuthenticatedRequest extends Request {
+    user?: {
+        _id: string;
+    };
+}
+
 /**
  * @function getMe
  * @description Retrieves the authenticated user's details using the JWT token provided in the Authorization header.
@@ -134,33 +140,31 @@ export const logIn = async (req: Request, res: Response, next: NextFunction): Pr
  * @throws {401} If no token is provided, token is invalid, or user not found.
  */
 
-export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        let token: string;
-        let decodedToken;
-        if (req.headers.authorization?.startsWith('Bearer ')) {
-
-            token = req.headers.authorization.split(' ')[1];
-            decodedToken = jwt.verify(token, JWT_SECRET) as MyJwtPayload;
-        } else {
+        if ( !req.user || !req.user._id) {
             res.status(401).json({
                 success: false,
-                error: 'Unauthorized: No token provided'
+                error: 'Unauthorized: User not authenticated'
             });
+            return;
         }
 
-        const user = await User.findById(decodedToken?.userId);
-        if ( !user ) {
+        const userData = await User.findById(req.user._id);
+
+        if ( !userData ) {
             res.status(401).json({
                 success: false,
-                error: 'Unauthorized: No user found with that token.'
-            })
+                error: `User with id: ${req.user._id} not found.`,
+            });
+            return;
         }
+
         res.status(200).json({
             success: true,
-            message: 'User found.',
-            data: user
-        })
+            data: userData
+        });
+
     } catch ( error: any ) {
         next(error);
     }
