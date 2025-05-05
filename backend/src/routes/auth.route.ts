@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getMe, logIn, signUp } from "../controllers/auth.controller";
+import {userAuthenticationMiddleware} from "../middleware/auth.middleware";
 
 /**
  * @constant authRoute
@@ -26,7 +27,7 @@ authRoute.post('/login', logIn);
  * @description Retrieves the currently authenticated user's information based on the JWT token.
  * @access Private
  */
-authRoute.get('/getMe', getMe);
+authRoute.get('/getMe', userAuthenticationMiddleware, getMe);
 
 /**
  * @exports authRoute
