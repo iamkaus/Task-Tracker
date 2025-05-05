@@ -7,6 +7,17 @@ interface MyJwtPayload extends jwt.JwtPayload {
     userId: string;
 }
 
+/**
+ * @function signUp
+ * @description Registers a new user by saving their details into the database and returning a signed JWT token.
+ * @param {Request} req - Express request object containing user registration data in the body.
+ * @param {Response} res - Express response object used to send status and JSON data.
+ * @param {NextFunction} next - Express next middleware function for error handling.
+ * @returns {Promise<void>} Responds with success status, JWT token, and newly created user data on success.
+ *
+ * @throws {400} If any required fields are missing or if a user with the provided email already exists.
+ */
+
 export const signUp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { name, email, password, country } = req.body;
@@ -52,6 +63,18 @@ export const signUp = async (req: Request, res: Response, next: NextFunction): P
         next(error);
     }
 }
+
+/**
+ * @function logIn
+ * @description Authenticates an existing user by verifying their credentials and returning a JWT token.
+ * @param {Request} req - Express request object containing login credentials in the body.
+ * @param {Response} res - Express response object used to send status and JSON data.
+ * @param {NextFunction} next - Express next middleware function for error handling.
+ * @returns {Promise<void>} Responds with success status, JWT token, and user data on success.
+ *
+ * @throws {400} If email or password is missing.
+ * @throws {401} If user is not found or password doesn't match.
+ */
 
 export const logIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -99,6 +122,17 @@ export const logIn = async (req: Request, res: Response, next: NextFunction): Pr
         next(error);
     }
 }
+
+/**
+ * @function getMe
+ * @description Retrieves the authenticated user's details using the JWT token provided in the Authorization header.
+ * @param {Request} req - Express request object containing the authorization token in headers.
+ * @param {Response} res - Express response object used to send status and JSON data.
+ * @param {NextFunction} next - Express next middleware function for error handling.
+ * @returns {Promise<void>} Responds with success status and user data on success.
+ *
+ * @throws {401} If no token is provided, token is invalid, or user not found.
+ */
 
 export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
