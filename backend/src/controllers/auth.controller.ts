@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import User from '../models/user.model'
-import {JWT_SECRET} from "../config/env.config";
 import jwt from "jsonwebtoken";
 
 interface MyJwtPayload extends jwt.JwtPayload {
@@ -122,6 +121,19 @@ export const logIn = async (req: Request, res: Response, next: NextFunction): Pr
         next(error);
     }
 }
+
+/**
+ * An extended Express Request interface to include authenticated user data.
+ *
+ * This interface adds an optional `user` property to the standard Express `Request`,
+ * which can be populated by authentication middleware after verifying a token.
+ *
+ * @interface AuthenticatedRequest
+ * @extends {Request}
+ *
+ * @property {Object} [user] - Optional authenticated user object.
+ * @property {string} user._id - Unique identifier of the authenticated user.
+ */
 
 interface AuthenticatedRequest extends Request {
     user?: {
