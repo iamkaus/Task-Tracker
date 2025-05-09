@@ -42,7 +42,7 @@ projectRoute.get('/get-project/:projectId', userAuthenticationMiddleware, getPro
  * @param {string} id - Project ID.
  * @access Private
  */
-projectRoute.put('/update-project/:id', userAuthenticationMiddleware, updateProjectById);
+projectRoute.put('/update-project/:projectId', userAuthenticationMiddleware, updateProjectById);
 
 /**
  * @route DELETE /api/v1/projects/delete-project/:id
@@ -50,7 +50,7 @@ projectRoute.put('/update-project/:id', userAuthenticationMiddleware, updateProj
  * @param {string} id - Project ID.
  * @access Private
  */
-projectRoute.delete('/delete-project/:id', userAuthenticationMiddleware, deleteProjectById);
+projectRoute.delete('/delete-project/:projectId', userAuthenticationMiddleware, deleteProjectById);
 
 /**
  * @exports projectRoute
