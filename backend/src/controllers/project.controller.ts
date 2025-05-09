@@ -237,7 +237,7 @@ export const updateProjectById = async (req: AuthenticatedRequest, res: Response
         if ( !updatedProject ) {
             res.status(401).json({
                 success: false,
-                error: 'Project not found.'
+                error: 'Error updating project.'
             });
             return;
         }
@@ -253,4 +253,71 @@ export const updateProjectById = async (req: AuthenticatedRequest, res: Response
     }
 };
 
-export const deleteProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {}
+/**
+ * @function deleteProjectById
+ * @description
+ * Controller function to delete an existing project by its unique identifier (`projectId`).
+ * It ensures the project exists, verifies that the authenticated user is the owner of the project,
+ * and deletes the project from the database.
+ *
+ * @param {AuthenticatedRequest} req - Express request object extended with optional authenticated user information.
+ * Contains the `projectId` as a route parameter.
+ * @param {Response} res - Express response object for sending JSON responses.
+ * @param {NextFunction} next - Express middleware function for error handling.
+ *
+ * @returns {Promise<void>}
+ * Sends a JSON response confirming successful deletion of the project.
+ * Returns appropriate error messages for missing project ID, unauthenticated access,
+ * unauthorized operations, or if the project is not found.
+ * Any unexpected errors are passed to the next middleware.
+ */
+
+export const deleteProjectById = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { projectId } = req.params;
+        if ( !projectId ) {
+            res.status(401).json({
+                success: false,
+                error: 'Project ID not found.'
+            });
+            return;
+        }
+
+        const projectDetails = await ProjectModel.findById(projectId);
+        if ( !projectDetails ) {
+            res.status(401).json({
+                success: false,
+                error: 'Project not found.'
+            });
+            return;
+        }
+
+        const userId = req.user?._id;
+        const projectUser = projectDetails?.user.toString()
+
+        if ( !userId || userId.toString() !== projectUser ) {
+            res.status(401).json({
+                success: false,
+                error: `Current user with ID: ${userId} is not authorised to delete the project.`
+            });
+            return;
+        }
+
+        const deletedProject = await ProjectModel.findByIdAndDelete(projectId);
+        if ( !deletedProject ) {
+            res.status(401).json({
+                success: false,
+                error: 'Error deleting project.'
+            })
+        }
+
+        res.status(201).json({
+            success: true,
+            message: 'Project deleted successfully.',
+            data: deletedProject
+        })
+
+    } catch ( error: any ) {
+        next(error);
+    }
+};
