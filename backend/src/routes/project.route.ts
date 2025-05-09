@@ -6,6 +6,7 @@ import {
     getProjects,
     updateProjectById
 } from "../controllers/project.controller";
+import {userAuthenticationMiddleware} from "../middleware/auth.middleware";
 
 /**
  * @constant projectRoute
@@ -18,7 +19,7 @@ const projectRoute = Router();
  * @description Creates a new project.
  * @access Private
  */
-projectRoute.post('/create-project', createProject);
+projectRoute.post('/create-project', userAuthenticationMiddleware, createProject);
 
 /**
  * @route GET /api/v1/projects/get-projects
