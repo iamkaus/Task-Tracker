@@ -44,7 +44,7 @@ const ProjectSchema = new Schema<IProject>(
 
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'UserModel',
+            ref: 'User',
             required: true,
         },
     },
