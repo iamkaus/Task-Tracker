@@ -83,6 +83,23 @@ export const createProject = async (req: AuthenticatedRequest, res: Response, ne
     }
 };
 
+/**
+ * @function getProjects
+ * @description
+ * Controller function to fetch all projects associated with an authenticated user.
+ * It checks for a valid authenticated user in the request, retrieves projects from the database
+ * where the `user` field matches the authenticated user's `_id`, and returns them in the response.
+ *
+ * @param {AuthenticatedRequest} req - Express request object extended with optional authenticated user information.
+ * @param {Response} res - Express response object for sending JSON responses.
+ * @param {NextFunction} next - Express middleware function for error handling.
+ *
+ * @returns {Promise<void>}
+ * Sends a JSON response containing the user's projects if found.
+ * Returns appropriate error messages if the user is unauthenticated or has no projects.
+ * If an unexpected error occurs, it passes the error to the next middleware.
+ */
+
 export const getProjects = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.user?._id;
@@ -114,9 +131,35 @@ export const getProjects = async (req: AuthenticatedRequest, res: Response, next
     } catch ( error: any ) {
         next(error);
     }
-}
+};
 
-export const getProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {}
+export const getProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { projectId } = req.params;
+        if ( !projectId ) {
+            res.status(401).json({
+                success: false,
+                error: 'Project ID not found.'
+            })
+        }
+
+        const projectDetails = await ProjectModel.findById(projectId);
+        if ( !projectDetails ) {
+            res.status(401).json({
+                success: false,
+                error: 'Project not found.'
+            })
+        }
+
+        res.status(201).json({
+            success: true,
+            message: 'Project found successfully.',
+            data: projectDetails
+        })
+    } catch ( error: any ) {
+        next(error);
+    }
+}
 
 export const updateProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {}
 
