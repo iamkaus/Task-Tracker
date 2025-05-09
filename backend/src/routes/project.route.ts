@@ -26,7 +26,7 @@ projectRoute.post('/create-project', userAuthenticationMiddleware, createProject
  * @description Retrieves all projects for the authenticated user.
  * @access Private
  */
-projectRoute.get('/get-projects', getProjects);
+projectRoute.get('/get-projects', userAuthenticationMiddleware, getProjects);
 
 /**
  * @route GET /api/v1/projects/get-project/:id
@@ -34,7 +34,7 @@ projectRoute.get('/get-projects', getProjects);
  * @param {string} id - Project ID.
  * @access Private
  */
-projectRoute.get('/get-project/:id', getProjectById);
+projectRoute.get('/get-project/:id', userAuthenticationMiddleware, getProjectById);
 
 /**
  * @route PUT /api/v1/projects/update-project/:id
@@ -42,7 +42,7 @@ projectRoute.get('/get-project/:id', getProjectById);
  * @param {string} id - Project ID.
  * @access Private
  */
-projectRoute.put('/update-project/:id', updateProjectById);
+projectRoute.put('/update-project/:id', userAuthenticationMiddleware, updateProjectById);
 
 /**
  * @route DELETE /api/v1/projects/delete-project/:id
@@ -50,7 +50,7 @@ projectRoute.put('/update-project/:id', updateProjectById);
  * @param {string} id - Project ID.
  * @access Private
  */
-projectRoute.delete('/delete-project/:id', deleteProjectById);
+projectRoute.delete('/delete-project/:id', userAuthenticationMiddleware, deleteProjectById);
 
 /**
  * @exports projectRoute
