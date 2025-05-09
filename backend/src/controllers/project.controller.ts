@@ -133,6 +133,23 @@ export const getProjects = async (req: AuthenticatedRequest, res: Response, next
     }
 };
 
+/**
+ * @function getProjectById
+ * @description
+ * Controller function to fetch a single project by its unique identifier (`projectId`).
+ * It expects a valid `projectId` parameter in the request URL, retrieves the corresponding project
+ * from the database, and returns its details in the response.
+ *
+ * @param {Request} req - Express request object containing the `projectId` as a route parameter.
+ * @param {Response} res - Express response object for sending JSON responses.
+ * @param {NextFunction} next - Express middleware function for error handling.
+ *
+ * @returns {Promise<void>}
+ * Sends a JSON response containing the project's details if found.
+ * Returns appropriate error messages if the `projectId` is missing or the project is not found.
+ * If an unexpected error occurs, it passes the error to the next middleware.
+ */
+
 export const getProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { projectId } = req.params;
@@ -159,7 +176,7 @@ export const getProjectById = async (req: Request, res: Response, next: NextFunc
     } catch ( error: any ) {
         next(error);
     }
-}
+};
 
 export const updateProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {}
 
