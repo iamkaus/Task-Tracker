@@ -34,7 +34,7 @@ projectRoute.get('/get-projects', userAuthenticationMiddleware, getProjects);
  * @param {string} id - Project ID.
  * @access Private
  */
-projectRoute.get('/get-project/:id', userAuthenticationMiddleware, getProjectById);
+projectRoute.get('/get-project/:projectId', userAuthenticationMiddleware, getProjectById);
 
 /**
  * @route PUT /api/v1/projects/update-project/:id
