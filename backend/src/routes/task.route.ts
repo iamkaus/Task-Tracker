@@ -6,6 +6,7 @@ import {
     getTaskById,
     updateTaskById
 } from "../controllers/task.controller";
+import {userAuthenticationMiddleware} from "../middleware/auth.middleware";
 
 /**
  * @constant taskRoute
@@ -18,14 +19,14 @@ const taskRoute = Router();
  * @description Creates a new task.
  * @access Private
  */
-taskRoute.post('/create-task', createTask);
+taskRoute.post('/create-task', userAuthenticationMiddleware, createTask);
 
 /**
  * @route GET /api/v1/tasks/get-tasks
  * @description Retrieves all tasks for the authenticated user.
  * @access Private
  */
-taskRoute.get('/get-tasks', getTasks);
+taskRoute.get('/get-tasks', userAuthenticationMiddleware, getTasks);
 
 /**
  * @route GET /api/v1/tasks/get-task/:id
@@ -33,7 +34,7 @@ taskRoute.get('/get-tasks', getTasks);
  * @param {string} id - Task ID.
  * @access Private
  */
-taskRoute.get('/get-task/:id', getTaskById);
+taskRoute.get('/get-task/:id', userAuthenticationMiddleware, getTaskById);
 
 /**
  * @route PUT /api/v1/tasks/update-tasks/:id
@@ -41,7 +42,7 @@ taskRoute.get('/get-task/:id', getTaskById);
  * @param {string} id - Task ID.
  * @access Private
  */
-taskRoute.put('/update-tasks/:id', updateTaskById);
+taskRoute.put('/update-tasks/:id', userAuthenticationMiddleware, updateTaskById);
 
 /**
  * @route DELETE /api/v1/tasks/delete-tasks/:id
@@ -49,7 +50,7 @@ taskRoute.put('/update-tasks/:id', updateTaskById);
  * @param {string} id - Task ID.
  * @access Private
  */
-taskRoute.delete('/delete-tasks/:id', deleteTaskById);
+taskRoute.delete('/delete-tasks/:id', userAuthenticationMiddleware, deleteTaskById);
 
 /**
  * @exports taskRoute
