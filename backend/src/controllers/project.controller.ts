@@ -112,7 +112,7 @@ export const getProjects = async (req: AuthenticatedRequest, res: Response, next
         const userId = req.user?._id;
 
         if ( !userId ) {
-            res.status(401).json({
+            res.status(400).json({
                 success: false,
                 error: 'User ID not found.'
             })
@@ -123,13 +123,13 @@ export const getProjects = async (req: AuthenticatedRequest, res: Response, next
         })
 
         if ( userProject.length === 0 ) {
-            res.status(401).json({
+            res.status(404).json({
                 success: false,
                 error: "User does not have any projects."
             })
         }
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: 'User project found successfully.',
             data: userProject
@@ -161,7 +161,7 @@ export const getProjectById = async (req: Request, res: Response, next: NextFunc
     try {
         const { projectId } = req.params;
         if ( !projectId ) {
-            res.status(401).json({
+            res.status(400).json({
                 success: false,
                 error: 'Project ID not found.'
             })
@@ -169,13 +169,13 @@ export const getProjectById = async (req: Request, res: Response, next: NextFunc
 
         const projectDetails = await ProjectModel.findById(projectId);
         if ( !projectDetails ) {
-            res.status(401).json({
+            res.status(404).json({
                 success: false,
                 error: 'Project not found.'
             })
         }
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: 'Project found successfully.',
             data: projectDetails
@@ -208,7 +208,7 @@ export const updateProjectById = async (req: AuthenticatedRequest, res: Response
     try {
         const { projectId } = req.params;
         if ( !projectId ) {
-            res.status(401).json({
+            res.status(400).json({
                 success: false,
                 error: 'Project ID not found.'
             });
@@ -217,7 +217,7 @@ export const updateProjectById = async (req: AuthenticatedRequest, res: Response
 
         const projectDetails = await ProjectModel.findById(projectId);
         if ( !projectDetails ) {
-            res.status(401).json({
+            res.status(404).json({
                 success: false,
                 error: 'Project not found.'
             });
@@ -249,7 +249,7 @@ export const updateProjectById = async (req: AuthenticatedRequest, res: Response
             return;
         }
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: 'Project updated successfully.',
             data: updatedProject
@@ -283,7 +283,7 @@ export const deleteProjectById = async (req: AuthenticatedRequest, res: Response
     try {
         const { projectId } = req.params;
         if ( !projectId ) {
-            res.status(401).json({
+            res.status(400).json({
                 success: false,
                 error: 'Project ID not found.'
             });
@@ -292,7 +292,7 @@ export const deleteProjectById = async (req: AuthenticatedRequest, res: Response
 
         const projectDetails = await ProjectModel.findById(projectId);
         if ( !projectDetails ) {
-            res.status(401).json({
+            res.status(404).json({
                 success: false,
                 error: 'Project not found.'
             });
@@ -318,7 +318,7 @@ export const deleteProjectById = async (req: AuthenticatedRequest, res: Response
             })
         }
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: 'Project deleted successfully.',
             data: deletedProject
