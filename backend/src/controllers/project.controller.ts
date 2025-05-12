@@ -102,6 +102,13 @@ export const createProject = async (req: AuthenticatedRequest, res: Response, ne
 
 export const getProjects = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
+        if (!req.user || !req.user._id) {
+            res.status(401).json({
+                success: false,
+                error: 'User not authenticated'
+            });
+            return;
+        }
         const userId = req.user?._id;
 
         if ( !userId ) {

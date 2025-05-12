@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import {ParamsDictionary} from "express-serve-static-core";
 import {ParsedQs} from "qs";
 import {TaskModel} from "../models/task.model";
+import {ProjectModel} from "../models/project.model";
 
 interface UserRequests {
     _id: string;
@@ -36,7 +37,7 @@ export const createTask = async (req: AuthenticatedRequest, res: Response, next:
             title,
             description,
             status,
-            projectId,
+            project: projectId,
             user: userId,
         });
 
@@ -59,10 +60,69 @@ export const createTask = async (req: AuthenticatedRequest, res: Response, next:
     }
 }
 
-export const getTasks = async (req: Request, res: Response, next: NextFunction) => {}
+export const getTasks = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        if (!req.user || !req.user._id) {
+            res.status(401).json({
+                success: false,
+                error: 'User not authenticated'
+            });
+            return;
+        }
+        const userId = req.user._id;
 
-export const getTaskById = async (req: Request, res: Response, next: NextFunction) => {}
+        const userTasks = await TaskModel.find({
+            user: userId
+        })
 
-export const updateTaskById = async (req: Request, res: Response, next: NextFunction) => {}
+        if ( !userTasks ) {
+            res.status(400).json({
+                success: false,
+                error: `No tasks found for user: ${userId}.`
+            })
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            error: 'Tasks found successfully.',
+            data: userTasks
+        })
+    }  catch ( error: any ) {
+        next(error);
+    }
+}
+
+export const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { taskId } = req.params;
+        if ( !taskId ) {
+            res.status(401).json({
+                success: false,
+                error: 'Task ID not found.'
+            })
+        }
+
+        const taskDetails = await TaskModel.findById(taskId);
+        if ( !taskDetails ) {
+            res.status(401).json({
+                success: false,
+                error: 'Task not found.'
+            })
+        }
+
+        res.status(201).json({
+            success: true,
+            message: 'Task found successfully.',
+            data: taskDetails
+        })
+    } catch ( error: any ) {
+        next(error);
+    }
+}
+
+export const updateTaskById = async (req: Request, res: Response, next: NextFunction) => {
+
+}
 
 export const deleteTaskById = async (req: Request, res: Response, next: NextFunction) => {}
